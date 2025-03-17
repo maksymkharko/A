@@ -3,44 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список ссылок</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>iOS Bookmarks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <button id="add-link" class="btn-icon">
-                <i class="fas fa-plus"></i>
-            </button>
-            <button id="edit-mode" class="btn-icon">
-                <i class="fas fa-pencil-alt"></i>
-            </button>
-        </div>
+    <div class="header">
+        <button class="btn" id="editBtn"><i class="fas fa-pencil"></i></button>
+        <button class="btn" id="addBtn" style="background: #32D74B;"><i class="fas fa-plus"></i></button>
+    </div>
 
-        <ul class="link-list" id="link-list"></ul>
+    <div id="bookmarksList"></div>
 
-        <div class="modal" id="modal">
-            <div class="modal-content">
-                <h3 id="modal-title">Новая ссылка</h3>
-                <input type="text" id="link-name" placeholder="Название" class="modal-input">
-                <input type="url" id="link-url" placeholder="URL (https://)" class="modal-input">
-                <textarea id="link-desc" placeholder="Описание" class="modal-input"></textarea>
-                
-                <div class="modal-actions">
-                    <button class="btn btn-delete" id="delete-btn">
-                        <i class="fas fa-trash"></i> Удалить
-                    </button>
-                    <div class="action-group">
-                        <button class="btn btn-cancel">Отменить</button>
-                        <button class="btn btn-save">Сохранить</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="settings-btn">
+        <i class="fas fa-cog"></i>
+    </div>
 
-        <div class="settings-icon">
-            <i class="fas fa-cog"></i>
+    <!-- Модальное окно -->
+    <div class="modal" id="modal" style="display: none;">
+        <input type="text" id="nameInput" placeholder="Название">
+        <input type="url" id="urlInput" placeholder="https://example.com">
+        <input type="text" id="descInput" placeholder="Описание">
+        <div class="modal-buttons">
+            <button class="btn" id="cancelBtn">Отмена</button>
+            <button class="btn" id="saveBtn">Сохранить</button>
         </div>
     </div>
 
