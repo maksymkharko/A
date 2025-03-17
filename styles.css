@@ -1,11 +1,10 @@
 :root {
-    --bg: #1C1C1E;
-    --surface: #2C2C2E;
-    --primary: #0A84FF;
-    --danger: #FF453A;
-    --text: #FFFFFF;
-    --border-radius: 14px;
-    --glass-gradient: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.2) 100%);
+    --bg: #000000; /* Черный фон */
+    --surface: #1A1A1A; /* Темно-серый для элементов */
+    --text: #FFFFFF; /* Белый текст */
+    --text-secondary: #CCCCCC; /* Серый для второстепенного текста */
+    --border-radius: 12px;
+    --glass-gradient: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
 }
 
 * {
@@ -21,12 +20,21 @@ body {
     padding: 20px;
 }
 
+/* Стиль для маленьких кнопок */
+.small-btn {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+}
+
 /* Скевоморфные кнопки */
 .btn {
     padding: 12px 24px;
     border: none;
     border-radius: var(--border-radius);
-    background: var(--glass-gradient);
+    background: var(--surface);
     box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3),
                 inset 0 1px 2px rgba(255,255,255,0.1),
                 0 4px 8px rgba(0,0,0,0.3);
@@ -43,12 +51,11 @@ body {
                 inset 0 1px 1px rgba(255,255,255,0.1);
 }
 
-/* Шапка */
+/* Шапка с фиксированными кнопками */
 .header {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-bottom: 24px;
     position: fixed;
     top: 20px;
     right: 20px;
@@ -74,7 +81,7 @@ body {
 
 .bookmark-icon {
     font-size: 24px;
-    color: var(--primary);
+    color: var(--text-secondary);
     flex-shrink: 0;
 }
 
@@ -125,7 +132,7 @@ input {
     flex: 1;
 }
 
-/* Шестерёнка настроек */
+/* Кнопка настроек */
 .settings-btn {
     position: fixed;
     bottom: 10px;
@@ -137,4 +144,11 @@ input {
     display: grid;
     place-items: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    color: var(--text);
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.settings-btn:hover {
+    transform: rotate(90deg);
 }
