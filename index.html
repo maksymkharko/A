@@ -22,14 +22,26 @@
         <i class="fas fa-cog"></i>
     </a>
 
-    <!-- Модальное окно -->
-    <div class="modal" id="modal" style="display: none;">
+    <!-- Модальное окно для добавления -->
+    <div class="modal" id="addModal" style="display: none;">
         <input type="text" id="nameInput" placeholder="Название">
         <input type="url" id="urlInput" placeholder="https://example.com">
         <input type="text" id="descInput" placeholder="Описание">
         <div class="modal-buttons">
-            <button class="btn" id="cancelBtn">Отмена</button>
+            <button class="btn" id="cancelAddBtn">Отмена</button>
             <button class="btn" id="saveBtn">Сохранить</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно для редактирования -->
+    <div class="modal" id="editModal" style="display: none;">
+        <input type="text" id="editNameInput" placeholder="Название">
+        <input type="url" id="editUrlInput" placeholder="https://example.com">
+        <input type="text" id="editDescInput" placeholder="Описание">
+        <div class="modal-buttons">
+            <button class="btn danger-btn" id="deleteBtn">Удалить</button>
+            <button class="btn" id="cancelEditBtn">Отмена</button>
+            <button class="btn" id="updateBtn">Обновить</button>
         </div>
     </div>
 
