@@ -21,7 +21,7 @@ body {
 .container {
     max-width: 600px;
     margin: 0 auto;
-    position: relative;
+    padding: 0 10px;
 }
 
 .header {
@@ -29,7 +29,6 @@ body {
     justify-content: flex-end;
     gap: 12px;
     margin-bottom: 20px;
-    padding: 0 10px;
 }
 
 .btn-icon {
@@ -119,6 +118,8 @@ body {
     align-items: center;
     z-index: 1000;
     animation: fadeIn 0.3s ease;
+    padding: 25px;
+    box-sizing: border-box;
 }
 
 @keyframes fadeIn {
@@ -130,13 +131,14 @@ body {
     background: var(--item-bg);
     border-radius: 14px;
     padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    transform: translateY(-20px);
+    width: 100%;
+    max-width: 600px;
     animation: slideUp 0.3s ease forwards;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 @keyframes slideUp {
+    from { transform: translateY(20px); }
     to { transform: translateY(0); }
 }
 
@@ -156,6 +158,7 @@ body {
     color: var(--text-primary);
     font-size: 15px;
     transition: border-color 0.2s ease;
+    box-sizing: border-box;
 }
 
 .modal-input:focus {
@@ -180,23 +183,29 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: opacity 0.2s ease;
+    transition: all 0.2s ease;
+    flex: 1;
+    font-size: 15px;
 }
 
 .btn:hover {
-    opacity: 0.9;
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(1px);
 }
 
 .btn-delete {
     background: var(--accent-red);
     color: white;
-    width: 100%;
 }
 
 .action-group {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
+    width: 100%;
 }
 
 .btn-cancel {
@@ -232,28 +241,20 @@ body {
 }
 
 @media (max-width: 480px) {
-    .modal-content {
-        width: 95%;
+    .modal {
         padding: 15px;
     }
     
-    .modal-input {
-        padding: 10px;
-        font-size: 14px;
+    .modal-content {
+        padding: 15px;
     }
     
     .btn {
-        padding: 10px 15px;
+        padding: 12px 15px;
         font-size: 14px;
     }
     
     .link-item {
         padding: 12px;
-    }
-    
-    .link-icon {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
     }
 }
