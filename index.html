@@ -13,30 +13,31 @@
             <button id="add-link" class="btn-icon">
                 <i class="fas fa-plus"></i>
             </button>
-            <button id="edit-mode" class="btn-icon edit-mode-toggle">
+            <button id="edit-mode" class="btn-icon">
                 <i class="fas fa-pencil-alt"></i>
             </button>
         </div>
 
         <ul class="link-list" id="link-list"></ul>
 
+        <!-- Модальное окно -->
         <div class="modal" id="modal">
             <div class="modal-content">
-                <h3>Новая ссылка</h3>
-                <input type="text" id="link-name" placeholder="Название">
-                <input type="url" id="link-url" placeholder="URL (начинается с http://)">
-                <textarea id="link-desc" placeholder="Описание"></textarea>
+                <h3 id="modal-title">Новая ссылка</h3>
+                <input type="text" id="link-name" placeholder="Название" class="modal-input">
+                <input type="url" id="link-url" placeholder="URL (https://)" class="modal-input">
+                <textarea id="link-desc" placeholder="Описание" class="modal-input"></textarea>
+                
                 <div class="modal-actions">
-                    <button class="btn cancel">Отменить</button>
-                    <button class="btn save">Сохранить</button>
+                    <button class="btn btn-delete" id="delete-btn">
+                        <i class="fas fa-trash"></i> Удалить
+                    </button>
+                    <div class="action-group">
+                        <button class="btn btn-cancel">Отменить</button>
+                        <button class="btn btn-save">Сохранить</button>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="delete-footer" id="delete-footer">
-            <button class="btn delete-btn" onclick="deleteSelectedLink()">
-                <i class="fas fa-trash"></i> Удалить выбранную
-            </button>
         </div>
 
         <div class="settings-icon">
