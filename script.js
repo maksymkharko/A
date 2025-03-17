@@ -14,7 +14,7 @@ function renderBookmarks() {
     const bookmarks = storage.get();
     const list = document.getElementById('bookmarksList');
     list.innerHTML = bookmarks.map((bookmark, index) => `
-        <div class="bookmark" data-index="${index}">
+        <div class="bookmark" data-index="${index}" onclick="handleBookmarkClick(event, '${bookmark.url}')">
             <i class="${bookmark.icon || 'fas fa-link'} bookmark-icon"></i>
             <div>
                 <h3>${bookmark.name}</h3>
@@ -22,6 +22,20 @@ function renderBookmarks() {
             </div>
         </div>
     `).join('');
+
+    // Добавляем класс для режима редактирования
+    if (isEditMode) {
+        document.body.classList.add('edit-mode');
+    } else {
+        document.body.classList.remove('edit-mode');
+    }
+}
+
+// Обработчик клика на закладку
+function handleBookmarkClick(event, url) {
+    if (isEditMode) return; // В режиме редактирования не переходим по ссылке
+    event.preventDefault();
+    window.open(url, '_blank');
 }
 
 // Обработчики событий
@@ -32,6 +46,7 @@ document.getElementById('addBtn').addEventListener('click', () => {
 document.getElementById('editBtn').addEventListener('click', () => {
     isEditMode = !isEditMode;
     document.getElementById('editBtn').classList.toggle('active', isEditMode);
+    renderBookmarks();
 });
 
 document.getElementById('cancelAddBtn').addEventListener('click', () => {
@@ -89,7 +104,7 @@ document.getElementById('deleteBtn').addEventListener('click', () => {
     document.getElementById('editModal').style.display = 'none';
 });
 
-// Обработка клика на закладку
+// Обработка клика на закладку в режиме редактирования
 document.getElementById('bookmarksList').addEventListener('click', (e) => {
     if (!isEditMode) return;
 
