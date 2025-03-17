@@ -1,15 +1,17 @@
 const linksKey = 'CLOWNADESOSLINKS';
-let editMode = false;
 let currentEditIndex = null;
+let isEditMode = false;
 
 const modal = document.getElementById('modal');
-const deleteFooter = document.getElementById('delete-footer');
+const deleteBtn = document.getElementById('delete-btn');
+const editModeBtn = document.getElementById('edit-mode');
 
 // Инициализация
 document.getElementById('add-link').addEventListener('click', () => showModal());
-document.querySelector('.cancel').addEventListener('click', () => hideModal());
-document.querySelector('.save').addEventListener('click', saveLink);
-document.getElementById('edit-mode').addEventListener('click', toggleEditMode);
+document.querySelector('.btn-cancel').addEventListener('click', closeModal);
+document.querySelector('.btn-save').addEventListener('click', saveLink);
+deleteBtn.addEventListener('click', handleDelete);
+editModeBtn.addEventListener('click', toggleEditMode);
 
 function loadLinks() {
     const links = JSON.parse(localStorage.getItem(linksKey)) || [];
@@ -18,7 +20,7 @@ function loadLinks() {
 
     links.forEach((link, index) => {
         const li = document.createElement('li');
-        li.className = `link-item ${editMode ? 'editable' : ''}`;
+        li.className = 'link-item';
         li.innerHTML = `
             <div class="link-icon">
                 <i class="fas fa-link"></i>
@@ -29,73 +31,95 @@ function loadLinks() {
             </div>
         `;
 
-        if(editMode) {
-            li.addEventListener('click', () => editLink(index));
-        } else {
-            li.onclick = () => window.open(link.url, '_blank');
-        }
+        li.addEventListener('click', () => {
+            if(isEditMode) {
+                showModal(link, index);
+            } else {
+                window.open(link.url, '_blank');
+            }
+        });
 
         list.appendChild(li);
     });
 }
 
-function showModal(linkData) {
-    modal.style.display = 'flex';
-    if(linkData) {
+function showModal(linkData = null, index = null) {
+    currentEditIndex = index;
+    const isEditing = !!linkData;
+    
+    // Настройка модального окна
+    document.getElementById('modal-title').textContent = isEditing ? 'Редактировать ссылку' : 'Новая ссылка';
+    deleteBtn.style.display = isEditing ? 'flex' : 'none';
+    
+    if(isEditing) {
         document.getElementById('link-name').value = linkData.name;
         document.getElementById('link-url').value = linkData.url;
         document.getElementById('link-desc').value = linkData.description;
+    } else {
+        document.getElementById('link-name').value = '';
+        document.getElementById('link-url').value = '';
+        document.getElementById('link-desc').value = '';
     }
+    
+    modal.style.display = 'flex';
 }
 
-function hideModal() {
+function closeModal() {
     modal.style.display = 'none';
     currentEditIndex = null;
 }
 
 function saveLink() {
-    const name = document.getElementById('link-name').value;
-    const url = document.getElementById('link-url').value;
-    const description = document.getElementById('link-desc').value;
+    const linkData = {
+        name: document.getElementById('link-name').value.trim(),
+        url: document.getElementById('link-url').value.trim(),
+        description: document.getElementById('link-desc').value.trim()
+    };
 
-    if(!name || !url) return alert('Заполните название и URL!');
+    if(!validateLink(linkData)) return;
 
     const links = JSON.parse(localStorage.getItem(linksKey)) || [];
     
-    if(currentEditIndex !== null) {
-        links[currentEditIndex] = { name, url, description };
+    if(typeof currentEditIndex === 'number') {
+        links[currentEditIndex] = linkData;
     } else {
-        links.push({ name, url, description });
+        links.push(linkData);
     }
 
     localStorage.setItem(linksKey, JSON.stringify(links));
-    hideModal();
+    closeModal();
+    loadLinks();
+}
+
+function handleDelete() {
+    if(typeof currentEditIndex !== 'number' || !confirm('Вы уверены, что хотите удалить эту ссылку?')) return;
+    
+    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
+    links.splice(currentEditIndex, 1);
+    localStorage.setItem(linksKey, JSON.stringify(links));
+    
+    closeModal();
     loadLinks();
 }
 
 function toggleEditMode() {
-    editMode = !editMode;
-    deleteFooter.classList.toggle('visible', editMode);
-    document.querySelectorAll('.link-item').forEach(item => {
-        item.classList.toggle('editable', editMode);
-    });
+    isEditMode = !isEditMode;
+    editModeBtn.style.backgroundColor = isEditMode ? '#404040' : '#2d2d2d';
     loadLinks();
 }
 
-function editLink(index) {
-    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    currentEditIndex = index;
-    showModal(links[index]);
-}
-
-function deleteSelectedLink() {
-    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    if(currentEditIndex !== null && confirm('Удалить выбранную ссылку?')) {
-        links.splice(currentEditIndex, 1);
-        localStorage.setItem(linksKey, JSON.stringify(links));
-        loadLinks();
+function validateLink({ name, url }) {
+    if(!name || !url) {
+        alert('Пожалуйста, заполните все обязательные поля');
+        return false;
     }
-    currentEditIndex = null;
+    
+    if(!url.startsWith('http://') && !url.startsWith('https://')) {
+        alert('URL должен начинаться с http:// или https://');
+        return false;
+    }
+    
+    return true;
 }
 
 // Первоначальная загрузка
