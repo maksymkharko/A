@@ -1,93 +1,102 @@
 const linksKey = 'CLOWNADESOSLINKS';
 let editMode = false;
-const icons = [
-    'fas fa-globe', 'fas fa-envelope', 'fas fa-music', 
-    'fas fa-video', 'fas fa-file', 'fas fa-image',
-    'fas fa-link', 'fas fa-book', 'fas fa-rss'
-];
+let currentEditIndex = null;
+
+const modal = document.getElementById('modal');
+const deleteFooter = document.getElementById('delete-footer');
+
+// Инициализация
+document.getElementById('add-link').addEventListener('click', () => showModal());
+document.querySelector('.cancel').addEventListener('click', () => hideModal());
+document.querySelector('.save').addEventListener('click', saveLink);
+document.getElementById('edit-mode').addEventListener('click', toggleEditMode);
 
 function loadLinks() {
     const links = JSON.parse(localStorage.getItem(linksKey)) || [];
     const list = document.getElementById('link-list');
     list.innerHTML = '';
-    
+
     links.forEach((link, index) => {
         const li = document.createElement('li');
-        li.className = `list-item ${editMode ? 'edit-mode' : ''}`;
+        li.className = `link-item ${editMode ? 'editable' : ''}`;
         li.innerHTML = `
-            <button class="delete-btn" onclick="deleteLink(${index})">
-                <i class="fas fa-times"></i>
-            </button>
-            <i class="${link.icon}"></i>
-            <div class="list-item-content">
-                <a href="${link.url}" target="_blank">${link.name}</a>
-                ${link.description ? `<div class="description">${link.description}</div>` : ''}
+            <div class="link-icon">
+                <i class="fas fa-link"></i>
             </div>
-            <div class="edit-buttons">
-                <button onclick="editLink(${index})">
-                    <i class="fas fa-pencil"></i>
-                </button>
+            <div class="link-content">
+                <h3 class="link-title">${link.name}</h3>
+                <p class="link-description">${link.description || ''}</p>
             </div>
         `;
+
+        if(editMode) {
+            li.addEventListener('click', () => editLink(index));
+        } else {
+            li.onclick = () => window.open(link.url, '_blank');
+        }
+
         list.appendChild(li);
     });
 }
 
-function saveLinks(links) {
-    localStorage.setItem(linksKey, JSON.stringify(links));
+function showModal(linkData) {
+    modal.style.display = 'flex';
+    if(linkData) {
+        document.getElementById('link-name').value = linkData.name;
+        document.getElementById('link-url').value = linkData.url;
+        document.getElementById('link-desc').value = linkData.description;
+    }
 }
 
-function addLink() {
-    const name = prompt('Введите название ссылки:');
-    if (!name) return;
-    
-    const url = prompt('Введите URL:');
-    if (!url) return;
-    
+function hideModal() {
+    modal.style.display = 'none';
+    currentEditIndex = null;
+}
+
+function saveLink() {
+    const name = document.getElementById('link-name').value;
+    const url = document.getElementById('link-url').value;
+    const description = document.getElementById('link-desc').value;
+
+    if(!name || !url) return alert('Заполните название и URL!');
+
     const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    links.push({ 
-        name, 
-        url,
-        icon: 'fas fa-link',
-        description: '' 
+    
+    if(currentEditIndex !== null) {
+        links[currentEditIndex] = { name, url, description };
+    } else {
+        links.push({ name, url, description });
+    }
+
+    localStorage.setItem(linksKey, JSON.stringify(links));
+    hideModal();
+    loadLinks();
+}
+
+function toggleEditMode() {
+    editMode = !editMode;
+    deleteFooter.classList.toggle('visible', editMode);
+    document.querySelectorAll('.link-item').forEach(item => {
+        item.classList.toggle('editable', editMode);
     });
-    saveLinks(links);
     loadLinks();
 }
 
 function editLink(index) {
     const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    const link = links[index];
-    
-    const newName = prompt('Новое название:', link.name);
-    const newUrl = prompt('Новый URL:', link.url);
-    const newDescription = prompt('Описание:', link.description);
-    const newIcon = prompt(`Доступные иконки:\n${icons.join('\n')}\nВведите класс иконки:`, link.icon);
-    
-    if (newName) link.name = newName;
-    if (newUrl) link.url = newUrl;
-    if (newDescription !== null) link.description = newDescription;
-    if (newIcon && icons.includes(newIcon)) link.icon = newIcon;
-    
-    saveLinks(links);
-    loadLinks();
+    currentEditIndex = index;
+    showModal(links[index]);
 }
 
-function deleteLink(index) {
-    if (confirm('Удалить эту ссылку?')) {
-        const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-        links.splice(index, 1);
-        saveLinks(links);
+function deleteSelectedLink() {
+    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
+    if(currentEditIndex !== null && confirm('Удалить выбранную ссылку?')) {
+        links.splice(currentEditIndex, 1);
+        localStorage.setItem(linksKey, JSON.stringify(links));
         loadLinks();
     }
+    currentEditIndex = null;
 }
 
-// Инициализация
-document.getElementById('add-link').addEventListener('click', addLink);
-document.getElementById('edit-mode').addEventListener('click', () => {
-    editMode = !editMode;
-    document.body.classList.toggle('edit-mode', editMode);
-    loadLinks();
-});
-
+// Первоначальная загрузка
 loadLinks();
