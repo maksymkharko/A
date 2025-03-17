@@ -10,14 +10,38 @@
 <body>
     <div class="container">
         <div class="header">
-            <button id="add-link"><i class="fas fa-plus"></i></button>
-            <button id="edit-mode" class="edit-mode-toggle"><i class="fas fa-pencil-alt"></i></button>
+            <button id="add-link" class="btn-icon">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button id="edit-mode" class="btn-icon edit-mode-toggle">
+                <i class="fas fa-pencil-alt"></i>
+            </button>
         </div>
-        <ul class="list" id="link-list"></ul>
-        
-        <a href="settings.html" class="settings-icon">
+
+        <ul class="link-list" id="link-list"></ul>
+
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <h3>Новая ссылка</h3>
+                <input type="text" id="link-name" placeholder="Название">
+                <input type="url" id="link-url" placeholder="URL (начинается с http://)">
+                <textarea id="link-desc" placeholder="Описание"></textarea>
+                <div class="modal-actions">
+                    <button class="btn cancel">Отменить</button>
+                    <button class="btn save">Сохранить</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="delete-footer" id="delete-footer">
+            <button class="btn delete-btn" onclick="deleteSelectedLink()">
+                <i class="fas fa-trash"></i> Удалить выбранную
+            </button>
+        </div>
+
+        <div class="settings-icon">
             <i class="fas fa-cog"></i>
-        </a>
+        </div>
     </div>
 
     <script src="script.js"></script>
