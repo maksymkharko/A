@@ -1,127 +1,53 @@
-const linksKey = 'CLOWNADESOSLINKS';
-let currentEditIndex = null;
-let isEditMode = false;
+const STORAGE_KEY = 'CLOWNADESOSLINKS';
 
-const modal = document.getElementById('modal');
-const deleteBtn = document.getElementById('delete-btn');
-const editModeBtn = document.getElementById('edit-mode');
-const saveBtn = document.querySelector('.btn-save');
-const cancelBtn = document.querySelector('.btn-cancel');
+// Инициализация хранилища
+const storage = {
+    get: () => JSON.parse(localStorage.getItem(STORAGE_KEY)) || [],
+    set: (items) => localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+};
 
-// Инициализация событий
-document.getElementById('add-link').addEventListener('click', showModal);
-saveBtn.addEventListener('click', saveLink);
-cancelBtn.addEventListener('click', closeModal);
-deleteBtn.addEventListener('click', handleDelete);
-editModeBtn.addEventListener('click', toggleEditMode);
-
-function loadLinks() {
-    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    const list = document.getElementById('link-list');
-    list.innerHTML = '';
-
-    links.forEach((link, index) => {
-        const li = document.createElement('li');
-        li.className = 'link-item';
-        li.innerHTML = `
-            <div class="link-icon">
-                <i class="fas fa-link"></i>
+// Рендер закладок
+function renderBookmarks() {
+    const bookmarks = storage.get();
+    const list = document.getElementById('bookmarksList');
+    list.innerHTML = bookmarks.map(bookmark => `
+        <div class="bookmark">
+            <i class="${bookmark.icon || 'fas fa-link'} bookmark-icon"></i>
+            <div>
+                <h3>${bookmark.name}</h3>
+                <p>${bookmark.description || ''}</p>
             </div>
-            <div class="link-content">
-                <h3 class="link-title">${link.name}</h3>
-                <p class="link-description">${link.description || ''}</p>
-            </div>
-        `;
-
-        li.addEventListener('click', () => {
-            if(isEditMode) {
-                showModal(link, index);
-            } else {
-                window.open(link.url, '_blank');
-            }
-        });
-
-        list.appendChild(li);
-    });
+        </div>
+    `).join('');
 }
 
-function showModal(linkData = null, index = null) {
-    currentEditIndex = index;
-    const isEditing = !!linkData;
-    
-    document.getElementById('modal-title').textContent = isEditing ? 'Редактировать ссылку' : 'Новая ссылка';
-    deleteBtn.style.display = isEditing ? 'flex' : 'none';
-    
-    if(isEditing) {
-        document.getElementById('link-name').value = linkData.name;
-        document.getElementById('link-url').value = linkData.url;
-        document.getElementById('link-desc').value = linkData.description;
-    } else {
-        document.getElementById('link-name').value = '';
-        document.getElementById('link-url').value = '';
-        document.getElementById('link-desc').value = '';
-    }
-    
-    modal.style.display = 'flex';
-}
+// Обработчики событий
+document.getElementById('addBtn').addEventListener('click', () => {
+    document.getElementById('modal').style.display = 'block';
+});
 
-function closeModal() {
-    modal.style.display = 'none';
-    currentEditIndex = null;
-}
+document.getElementById('cancelBtn').addEventListener('click', () => {
+    document.getElementById('modal').style.display = 'none';
+});
 
-function saveLink() {
-    const linkData = {
-        name: document.getElementById('link-name').value.trim(),
-        url: document.getElementById('link-url').value.trim(),
-        description: document.getElementById('link-desc').value.trim()
+document.getElementById('saveBtn').addEventListener('click', () => {
+    const bookmarks = storage.get();
+    const newBookmark = {
+        name: document.getElementById('nameInput').value,
+        url: document.getElementById('urlInput').value,
+        description: document.getElementById('descInput').value,
+        icon: 'fas fa-link'
     };
 
-    if(!validateLink(linkData)) return;
-
-    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    
-    if(typeof currentEditIndex === 'number') {
-        links[currentEditIndex] = linkData;
-    } else {
-        links.push(linkData);
+    if (!newBookmark.name || !newBookmark.url) {
+        alert('Название и URL обязательны!');
+        return;
     }
 
-    localStorage.setItem(linksKey, JSON.stringify(links));
-    closeModal();
-    loadLinks();
-}
+    storage.set([...bookmarks, newBookmark]);
+    renderBookmarks();
+    document.getElementById('modal').style.display = 'none';
+});
 
-function handleDelete() {
-    if(typeof currentEditIndex !== 'number' || !confirm('Вы уверены, что хотите удалить эту ссылку?')) return;
-    
-    const links = JSON.parse(localStorage.getItem(linksKey)) || [];
-    links.splice(currentEditIndex, 1);
-    localStorage.setItem(linksKey, JSON.stringify(links));
-    
-    closeModal();
-    loadLinks();
-}
-
-function toggleEditMode() {
-    isEditMode = !isEditMode;
-    editModeBtn.style.backgroundColor = isEditMode ? '#404040' : '#2d2d2d';
-    loadLinks();
-}
-
-function validateLink({ name, url }) {
-    if(!name || !url) {
-        alert('Пожалуйста, заполните все обязательные поля');
-        return false;
-    }
-    
-    if(!url.startsWith('http://') && !url.startsWith('https://')) {
-        alert('URL должен начинаться с http:// или https://');
-        return false;
-    }
-    
-    return true;
-}
-
-// Первоначальная загрузка
-loadLinks();
+// Инициализация
+renderBookmarks();
