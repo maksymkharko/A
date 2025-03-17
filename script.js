@@ -5,11 +5,13 @@ let isEditMode = false;
 const modal = document.getElementById('modal');
 const deleteBtn = document.getElementById('delete-btn');
 const editModeBtn = document.getElementById('edit-mode');
+const saveBtn = document.querySelector('.btn-save');
+const cancelBtn = document.querySelector('.btn-cancel');
 
-// Инициализация
-document.getElementById('add-link').addEventListener('click', () => showModal());
-document.querySelector('.btn-cancel').addEventListener('click', closeModal);
-document.querySelector('.btn-save').addEventListener('click', saveLink);
+// Инициализация событий
+document.getElementById('add-link').addEventListener('click', showModal);
+saveBtn.addEventListener('click', saveLink);
+cancelBtn.addEventListener('click', closeModal);
 deleteBtn.addEventListener('click', handleDelete);
 editModeBtn.addEventListener('click', toggleEditMode);
 
@@ -47,7 +49,6 @@ function showModal(linkData = null, index = null) {
     currentEditIndex = index;
     const isEditing = !!linkData;
     
-    // Настройка модального окна
     document.getElementById('modal-title').textContent = isEditing ? 'Редактировать ссылку' : 'Новая ссылка';
     deleteBtn.style.display = isEditing ? 'flex' : 'none';
     
