@@ -22,7 +22,7 @@ body {
 
 /* Список закладок с отступом сверху */
 #bookmarksList {
-    margin-top: 45px;
+    margin-top: 55px; /* Увеличен отступ на 10px */
 }
 
 /* Стиль для маленьких кнопок */
@@ -87,17 +87,18 @@ body {
     background: var(--surface);
     border-radius: var(--border-radius);
     padding: 16px;
-    margin: 12px 0;
+    margin: 16px 0; /* Увеличен отступ на 10px */
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5); /* Улучшенные тени */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
 }
 
 .bookmark:hover {
     transform: translateX(8px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.6); /* Тени при наведении */
 }
 
 .bookmark-icon {
@@ -196,4 +197,11 @@ input {
     box-shadow: inset 0 -1px 2px rgba(0,0,0,0.3),
                 inset 0 1px 1px rgba(255,255,255,0.1);
     background: rgba(255, 255, 255, 0.1);
+}
+
+/* Активное состояние кнопки редактирования */
+#editBtn.active {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 -1px 2px rgba(0,0,0,0.3),
+                inset 0 1px 1px rgba(255,255,255,0.1);
 }
