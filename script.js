@@ -6,12 +6,15 @@ const storage = {
     set: (items) => localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
 };
 
+let isEditMode = false;
+let currentEditIndex = null;
+
 // Рендер закладок
 function renderBookmarks() {
     const bookmarks = storage.get();
     const list = document.getElementById('bookmarksList');
-    list.innerHTML = bookmarks.map(bookmark => `
-        <div class="bookmark">
+    list.innerHTML = bookmarks.map((bookmark, index) => `
+        <div class="bookmark" data-index="${index}">
             <i class="${bookmark.icon || 'fas fa-link'} bookmark-icon"></i>
             <div>
                 <h3>${bookmark.name}</h3>
@@ -23,11 +26,20 @@ function renderBookmarks() {
 
 // Обработчики событий
 document.getElementById('addBtn').addEventListener('click', () => {
-    document.getElementById('modal').style.display = 'block';
+    document.getElementById('addModal').style.display = 'block';
 });
 
-document.getElementById('cancelBtn').addEventListener('click', () => {
-    document.getElementById('modal').style.display = 'none';
+document.getElementById('editBtn').addEventListener('click', () => {
+    isEditMode = !isEditMode;
+    document.getElementById('editBtn').classList.toggle('active', isEditMode);
+});
+
+document.getElementById('cancelAddBtn').addEventListener('click', () => {
+    document.getElementById('addModal').style.display = 'none';
+});
+
+document.getElementById('cancelEditBtn').addEventListener('click', () => {
+    document.getElementById('editModal').style.display = 'none';
 });
 
 document.getElementById('saveBtn').addEventListener('click', () => {
@@ -46,7 +58,54 @@ document.getElementById('saveBtn').addEventListener('click', () => {
 
     storage.set([...bookmarks, newBookmark]);
     renderBookmarks();
-    document.getElementById('modal').style.display = 'none';
+    document.getElementById('addModal').style.display = 'none';
+});
+
+document.getElementById('updateBtn').addEventListener('click', () => {
+    const bookmarks = storage.get();
+    const updatedBookmark = {
+        name: document.getElementById('editNameInput').value,
+        url: document.getElementById('editUrlInput').value,
+        description: document.getElementById('editDescInput').value,
+        icon: 'fas fa-link'
+    };
+
+    if (!updatedBookmark.name || !updatedBookmark.url) {
+        alert('Название и URL обязательны!');
+        return;
+    }
+
+    bookmarks[currentEditIndex] = updatedBookmark;
+    storage.set(bookmarks);
+    renderBookmarks();
+    document.getElementById('editModal').style.display = 'none';
+});
+
+document.getElementById('deleteBtn').addEventListener('click', () => {
+    const bookmarks = storage.get();
+    bookmarks.splice(currentEditIndex, 1);
+    storage.set(bookmarks);
+    renderBookmarks();
+    document.getElementById('editModal').style.display = 'none';
+});
+
+// Обработка клика на закладку
+document.getElementById('bookmarksList').addEventListener('click', (e) => {
+    if (!isEditMode) return;
+
+    const bookmarkElement = e.target.closest('.bookmark');
+    if (!bookmarkElement) return;
+
+    const index = bookmarkElement.dataset.index;
+    const bookmarks = storage.get();
+    const bookmark = bookmarks[index];
+
+    document.getElementById('editNameInput').value = bookmark.name;
+    document.getElementById('editUrlInput').value = bookmark.url;
+    document.getElementById('editDescInput').value = bookmark.description || '';
+    currentEditIndex = index;
+
+    document.getElementById('editModal').style.display = 'block';
 });
 
 // Инициализация
